@@ -13,9 +13,6 @@
   import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, where, orderBy }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  // =============================================
-  // 🔴 APNA FIREBASE CONFIG YAHAN DAALO
-  // =============================================
   const firebaseConfig = {
     apiKey: "AIzaSyCXRwOlylo5Jc1goDilju-DaNJ9eIQoHhM",
     authDomain: "finance-73177.firebaseapp.com",
@@ -49,12 +46,11 @@
   window.dispatchEvent(new Event('firebaseReady'));
 </script>
 
-<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<!-- Google Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
 :root {
   --bg: #0a0a0f;
   --surface: #12121a;
@@ -68,203 +64,280 @@
   --text2: #8888aa;
   --border: rgba(124,106,255,0.15);
   --glow: 0 0 40px rgba(124,106,255,0.15);
-  --radius: 16px;
+  --radius: 18px;
+  --font: 'Arial Rounded MT Bold', 'Nunito', 'Arial', sans-serif;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font);
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
   overflow-x: hidden;
+  font-size: 16px;
 }
 
 body::before {
   content: '';
   position: fixed;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(ellipse at 20% 20%, rgba(124,106,255,0.06) 0%, transparent 50%),
-              radial-gradient(ellipse at 80% 80%, rgba(255,106,155,0.04) 0%, transparent 50%);
-  pointer-events: none;
-  z-index: 0;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: radial-gradient(ellipse at 20% 20%, rgba(124,106,255,0.07) 0%, transparent 50%),
+              radial-gradient(ellipse at 80% 80%, rgba(255,106,155,0.05) 0%, transparent 50%);
+  pointer-events: none; z-index: 0;
 }
 
-/* ---- LOGIN SCREEN ---- */
+/* ===== LOGIN ===== */
 #login-screen {
   position: fixed; inset: 0;
   display: flex; align-items: center; justify-content: center;
-  z-index: 100;
-  background: var(--bg);
+  z-index: 100; background: var(--bg);
 }
-
 .login-card {
-  text-align: center;
-  padding: 60px 50px;
+  text-align: center; padding: 70px 60px;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 24px;
+  border-radius: 28px;
   box-shadow: var(--glow), 0 40px 80px rgba(0,0,0,0.5);
-  max-width: 420px;
-  width: 90%;
+  max-width: 460px; width: 90%;
   animation: fadeUp 0.6s ease;
 }
-
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(30px); }
   to { opacity: 1; transform: translateY(0); }
 }
-
-.login-logo {
-  font-family: 'Syne', sans-serif;
-  font-size: 48px;
-  margin-bottom: 8px;
-}
-
+.login-logo { font-size: 56px; margin-bottom: 10px; }
 .login-card h1 {
-  font-family: 'Syne', sans-serif;
-  font-size: 28px;
-  font-weight: 800;
+  font-family: var(--font);
+  font-size: 34px; font-weight: 800;
   background: linear-gradient(135deg, var(--accent), var(--accent2));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin-bottom: 8px;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  margin-bottom: 10px;
 }
-
 .login-card p {
-  color: var(--text2);
-  font-size: 14px;
-  margin-bottom: 32px;
-  line-height: 1.6;
+  color: var(--text2); font-size: 16px;
+  margin-bottom: 36px; line-height: 1.7;
 }
-
 .btn-google {
-  display: flex; align-items: center; justify-content: center; gap: 12px;
-  width: 100%;
-  padding: 16px 24px;
+  display: flex; align-items: center; justify-content: center; gap: 14px;
+  width: 100%; padding: 18px 28px;
   background: linear-gradient(135deg, var(--accent), #5548cc);
-  border: none;
-  border-radius: 12px;
-  color: white;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s;
-  font-family: 'DM Sans', sans-serif;
+  border: none; border-radius: 14px;
+  color: white; font-size: 18px; font-weight: 700;
+  cursor: pointer; transition: all 0.3s;
+  font-family: var(--font);
 }
+.btn-google:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(124,106,255,0.4); }
+.btn-google svg { width: 22px; height: 22px; }
 
-.btn-google:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(124,106,255,0.4);
+/* ===== LOADING ===== */
+.loading-overlay {
+  position: fixed; inset: 0; background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 200; flex-direction: column; gap: 18px;
 }
-
-.btn-google svg { width: 20px; height: 20px; }
-
-.firebase-note {
-  margin-top: 20px;
-  padding: 12px 16px;
-  background: rgba(255,200,50,0.1);
-  border: 1px solid rgba(255,200,50,0.3);
-  border-radius: 10px;
-  font-size: 12px;
-  color: #ffc832;
-  text-align: left;
-  line-height: 1.5;
+.spinner {
+  width: 54px; height: 54px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
 }
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { color: var(--text2); font-size: 17px; font-family: var(--font); }
 
-/* ---- MAIN APP ---- */
+/* ===== MAIN APP ===== */
 #app { display: none; position: relative; z-index: 1; }
 
-/* HEADER */
+/* ===== HEADER ===== */
 .header {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 20px 32px;
-  background: rgba(18,18,26,0.9);
+  padding: 22px 36px;
+  background: rgba(18,18,26,0.92);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border);
   position: sticky; top: 0; z-index: 50;
 }
-
-.header-brand {
-  display: flex; align-items: center; gap: 12px;
-}
-
+.header-brand { display: flex; align-items: center; gap: 14px; }
 .brand-logo {
-  width: 40px; height: 40px;
+  width: 46px; height: 46px;
   background: linear-gradient(135deg, var(--accent), var(--accent2));
-  border-radius: 10px;
+  border-radius: 12px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 20px;
+  font-size: 24px;
 }
-
 .brand-name {
-  font-family: 'Syne', sans-serif;
-  font-size: 20px;
-  font-weight: 800;
+  font-family: var(--font);
+  font-size: 24px; font-weight: 800;
   background: linear-gradient(135deg, var(--accent), var(--accent2));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
 }
 
-.user-area {
-  display: flex; align-items: center; gap: 16px;
+/* ===== TOP ACTION BUTTONS ===== */
+.top-actions {
+  display: flex; align-items: center; gap: 14px;
 }
-
-.user-avatar {
-  width: 38px; height: 38px; border-radius: 50%;
-  border: 2px solid var(--accent);
-  object-fit: cover;
+.btn-income-top {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 28px;
+  background: linear-gradient(135deg, #22d98e, #16a06a);
+  border: none; border-radius: 14px;
+  color: white; font-size: 17px; font-weight: 700;
+  cursor: pointer; transition: all 0.25s;
+  font-family: var(--font);
+  box-shadow: 0 4px 20px rgba(34,217,142,0.3);
 }
+.btn-income-top:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(34,217,142,0.45); }
 
-.user-name {
-  font-size: 14px; font-weight: 500;
-  color: var(--text2);
+.btn-expense-top {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 28px;
+  background: linear-gradient(135deg, #ff5e7d, #cc2a4a);
+  border: none; border-radius: 14px;
+  color: white; font-size: 17px; font-weight: 700;
+  cursor: pointer; transition: all 0.25s;
+  font-family: var(--font);
+  box-shadow: 0 4px 20px rgba(255,94,125,0.3);
 }
+.btn-expense-top:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(255,94,125,0.45); }
 
+.user-area { display: flex; align-items: center; gap: 16px; }
+.user-avatar { width: 42px; height: 42px; border-radius: 50%; border: 2px solid var(--accent); object-fit: cover; }
+.user-name { font-size: 15px; font-weight: 600; color: var(--text2); font-family: var(--font); }
 .btn-logout {
-  padding: 8px 18px;
+  padding: 10px 20px;
   background: transparent;
   border: 1px solid var(--border);
-  border-radius: 8px;
-  color: var(--text2);
-  font-size: 13px;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-family: 'DM Sans', sans-serif;
+  border-radius: 10px; color: var(--text2);
+  font-size: 14px; cursor: pointer;
+  transition: all 0.2s; font-family: var(--font);
 }
 .btn-logout:hover { border-color: var(--expense); color: var(--expense); }
 
-/* MAIN CONTENT */
-.main { padding: 32px; max-width: 1400px; margin: 0 auto; }
+/* ===== MODAL POPUP ===== */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(8px);
+  z-index: 300;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.3s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
 
-/* SUMMARY CARDS */
-.summary-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 20px;
+.modal-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 40px 44px;
+  width: 96%; max-width: 560px;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.6), var(--glow);
+  transform: translateY(40px) scale(0.97);
+  transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  position: relative;
+}
+.modal-overlay.open .modal-box { transform: translateY(0) scale(1); }
+
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
   margin-bottom: 32px;
 }
+.modal-title {
+  font-family: var(--font);
+  font-size: 24px; font-weight: 800;
+}
+.modal-title.income-title { color: var(--income); }
+.modal-title.expense-title { color: var(--expense); }
 
+.modal-close {
+  width: 40px; height: 40px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 20px; color: var(--text2);
+  transition: all 0.2s;
+}
+.modal-close:hover { background: var(--surface3); color: var(--text); }
+
+.modal-stripe {
+  height: 5px; border-radius: 3px;
+  margin-bottom: 32px;
+}
+.modal-stripe.income-stripe { background: linear-gradient(90deg, var(--income), #16a06a); }
+.modal-stripe.expense-stripe { background: linear-gradient(90deg, var(--expense), #cc2a4a); }
+
+.modal-form { display: flex; flex-direction: column; gap: 20px; }
+
+.form-group { display: flex; flex-direction: column; gap: 9px; }
+.form-label {
+  font-size: 13px; font-weight: 700;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-family: var(--font);
+}
+.form-input, .form-select {
+  padding: 15px 18px;
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: 12px; color: var(--text);
+  font-size: 16px; font-family: var(--font);
+  transition: border-color 0.2s; outline: none;
+}
+.form-input:focus, .form-select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(124,106,255,0.12);
+}
+.form-select option { background: var(--surface2); }
+
+.btn-save-income {
+  padding: 17px 28px;
+  background: linear-gradient(135deg, var(--income), #16a06a);
+  border: none; border-radius: 14px;
+  color: white; font-size: 18px; font-weight: 800;
+  cursor: pointer; transition: all 0.3s;
+  font-family: var(--font); margin-top: 6px;
+  box-shadow: 0 6px 24px rgba(34,217,142,0.35);
+}
+.btn-save-income:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(34,217,142,0.5); }
+
+.btn-save-expense {
+  padding: 17px 28px;
+  background: linear-gradient(135deg, var(--expense), #cc2a4a);
+  border: none; border-radius: 14px;
+  color: white; font-size: 18px; font-weight: 800;
+  cursor: pointer; transition: all 0.3s;
+  font-family: var(--font); margin-top: 6px;
+  box-shadow: 0 6px 24px rgba(255,94,125,0.35);
+}
+.btn-save-expense:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(255,94,125,0.5); }
+
+/* ===== MAIN CONTENT ===== */
+.main { padding: 36px; max-width: 1440px; margin: 0 auto; }
+
+/* ===== SUMMARY CARDS ===== */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 22px; margin-bottom: 36px;
+}
 .summary-card {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 24px;
-  position: relative;
-  overflow: hidden;
+  padding: 28px 26px;
+  position: relative; overflow: hidden;
   transition: transform 0.2s;
   animation: fadeUp 0.5s ease backwards;
 }
-.summary-card:hover { transform: translateY(-3px); }
+.summary-card:hover { transform: translateY(-4px); }
 .summary-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 3px;
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 4px;
 }
 .card-balance::before { background: linear-gradient(90deg, var(--accent), var(--accent2)); }
 .card-income::before { background: var(--income); }
@@ -272,11 +345,9 @@ body::before {
 .card-savings::before { background: linear-gradient(90deg, #ffc832, #ff8c32); }
 
 .card-icon {
-  width: 44px; height: 44px;
-  border-radius: 12px;
+  width: 52px; height: 52px; border-radius: 14px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 22px;
-  margin-bottom: 16px;
+  font-size: 26px; margin-bottom: 18px;
 }
 .card-balance .card-icon { background: rgba(124,106,255,0.15); }
 .card-income .card-icon { background: rgba(34,217,142,0.15); }
@@ -284,58 +355,44 @@ body::before {
 .card-savings .card-icon { background: rgba(255,200,50,0.15); }
 
 .card-label {
-  font-size: 12px;
-  color: var(--text2);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 6px;
+  font-size: 13px; color: var(--text2);
+  text-transform: uppercase; letter-spacing: 1px;
+  margin-bottom: 8px; font-family: var(--font);
 }
-
 .card-value {
-  font-family: 'Syne', sans-serif;
-  font-size: 28px;
-  font-weight: 700;
+  font-family: var(--font);
+  font-size: 32px; font-weight: 800;
 }
 .card-balance .card-value { color: var(--accent); }
 .card-income .card-value { color: var(--income); }
 .card-expense .card-value { color: var(--expense); }
 .card-savings .card-value { color: #ffc832; }
 
-/* TABS */
+/* ===== TABS ===== */
 .view-tabs {
-  display: flex; gap: 8px;
-  margin-bottom: 28px;
+  display: flex; gap: 8px; margin-bottom: 30px;
   background: var(--surface);
-  padding: 6px;
-  border-radius: 12px;
-  width: fit-content;
-  border: 1px solid var(--border);
+  padding: 7px; border-radius: 14px;
+  width: fit-content; border: 1px solid var(--border);
 }
-
 .tab {
-  padding: 10px 24px;
-  border: none;
-  border-radius: 8px;
-  background: transparent;
-  color: var(--text2);
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-family: 'DM Sans', sans-serif;
+  padding: 12px 28px;
+  border: none; border-radius: 10px;
+  background: transparent; color: var(--text2);
+  font-size: 15px; font-weight: 700;
+  cursor: pointer; transition: all 0.2s;
+  font-family: var(--font);
 }
 .tab.active {
   background: linear-gradient(135deg, var(--accent), #5548cc);
-  color: white;
-  box-shadow: 0 4px 15px rgba(124,106,255,0.3);
+  color: white; box-shadow: 0 4px 15px rgba(124,106,255,0.3);
 }
 
-/* CHARTS ROW */
+/* ===== CHARTS ===== */
 .charts-grid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 20px;
-  margin-bottom: 32px;
+  gap: 22px; margin-bottom: 36px;
 }
 @media (max-width: 900px) { .charts-grid { grid-template-columns: 1fr; } }
 
@@ -343,287 +400,133 @@ body::before {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 24px;
+  padding: 28px;
 }
-
 .chart-title {
-  font-family: 'Syne', sans-serif;
-  font-size: 15px;
-  font-weight: 700;
-  margin-bottom: 20px;
-  color: var(--text);
+  font-family: var(--font);
+  font-size: 17px; font-weight: 800;
+  margin-bottom: 22px; color: var(--text);
 }
 
-/* ADD TRANSACTION */
-.add-section {
+/* ===== CATEGORY BREAKDOWN ===== */
+.category-section {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 28px;
-  margin-bottom: 28px;
+  padding: 30px; margin-bottom: 30px;
 }
-
 .section-title {
-  font-family: 'Syne', sans-serif;
-  font-size: 18px;
-  font-weight: 700;
-  margin-bottom: 20px;
+  font-family: var(--font);
+  font-size: 20px; font-weight: 800;
+  margin-bottom: 22px;
   display: flex; align-items: center; gap: 10px;
 }
-
-.form-grid {
+.cat-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 16px;
-  align-items: end;
 }
-
-.form-group { display: flex; flex-direction: column; gap: 8px; }
-
-.form-label {
-  font-size: 12px;
-  color: var(--text2);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.form-input, .form-select {
-  padding: 12px 16px;
+.cat-item {
   background: var(--surface2);
+  border-radius: 14px; padding: 18px;
   border: 1px solid var(--border);
-  border-radius: 10px;
-  color: var(--text);
-  font-size: 14px;
-  font-family: 'DM Sans', sans-serif;
-  transition: border-color 0.2s;
-  outline: none;
 }
-.form-input:focus, .form-select:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(124,106,255,0.1);
+.cat-name { font-size: 15px; font-weight: 700; margin-bottom: 8px; font-family: var(--font); }
+.cat-bar-wrap {
+  height: 5px; background: var(--surface3);
+  border-radius: 3px; margin: 10px 0;
 }
-.form-select option { background: var(--surface2); }
+.cat-bar { height: 100%; border-radius: 3px; transition: width 0.8s ease; }
+.cat-amount { font-size: 18px; font-weight: 800; font-family: var(--font); }
+.cat-count { font-size: 13px; color: var(--text2); font-family: var(--font); }
 
-.type-toggle {
-  display: flex; gap: 8px;
-}
-
-.type-btn {
-  flex: 1;
-  padding: 12px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: var(--surface2);
-  color: var(--text2);
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-family: 'DM Sans', sans-serif;
-}
-.type-btn.income-active {
-  background: rgba(34,217,142,0.15);
-  border-color: var(--income);
-  color: var(--income);
-}
-.type-btn.expense-active {
-  background: rgba(255,94,125,0.15);
-  border-color: var(--expense);
-  color: var(--expense);
-}
-
-.btn-add {
-  padding: 12px 28px;
-  background: linear-gradient(135deg, var(--accent), #5548cc);
-  border: none;
-  border-radius: 10px;
-  color: white;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s;
-  font-family: 'DM Sans', sans-serif;
-  white-space: nowrap;
-}
-.btn-add:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(124,106,255,0.4);
-}
-
-/* TRANSACTIONS TABLE */
+/* ===== TRANSACTIONS TABLE ===== */
 .transactions-section {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 28px;
-  margin-bottom: 28px;
+  padding: 30px; margin-bottom: 30px;
 }
-
 .table-header {
   display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 20px;
-  flex-wrap: wrap; gap: 12px;
+  margin-bottom: 22px; flex-wrap: wrap; gap: 14px;
 }
-
-.filter-row {
-  display: flex; gap: 10px; flex-wrap: wrap;
-}
-
+.filter-row { display: flex; gap: 12px; flex-wrap: wrap; }
 .filter-input, .filter-select {
-  padding: 9px 14px;
+  padding: 11px 16px;
   background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  color: var(--text);
-  font-size: 13px;
-  font-family: 'DM Sans', sans-serif;
-  outline: none;
+  border: 1.5px solid var(--border);
+  border-radius: 10px; color: var(--text);
+  font-size: 14px; font-family: var(--font); outline: none;
 }
+.filter-input:focus, .filter-select:focus { border-color: var(--accent); }
 
 .table-wrap { overflow-x: auto; }
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-}
-
+table { width: 100%; border-collapse: collapse; font-size: 15px; }
 thead th {
-  padding: 12px 16px;
-  text-align: left;
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  color: var(--text2);
-  border-bottom: 1px solid var(--border);
+  padding: 14px 18px; text-align: left;
+  font-size: 12px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.9px;
+  color: var(--text2); border-bottom: 1px solid var(--border);
+  font-family: var(--font);
 }
-
-tbody tr {
-  border-bottom: 1px solid rgba(255,255,255,0.03);
-  transition: background 0.15s;
-}
+tbody tr { border-bottom: 1px solid rgba(255,255,255,0.03); transition: background 0.15s; }
 tbody tr:hover { background: var(--surface2); }
-
-tbody td { padding: 14px 16px; }
+tbody td { padding: 16px 18px; font-family: var(--font); }
 
 .badge {
   display: inline-flex; align-items: center;
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
+  padding: 5px 14px; border-radius: 22px;
+  font-size: 13px; font-weight: 700;
+  font-family: var(--font);
 }
 .badge-income { background: rgba(34,217,142,0.15); color: var(--income); }
 .badge-expense { background: rgba(255,94,125,0.15); color: var(--expense); }
 
 .cat-badge {
   display: inline-flex; align-items: center; gap: 5px;
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 12px;
-  background: var(--surface3);
-  color: var(--text2);
+  padding: 5px 12px; border-radius: 8px;
+  font-size: 13px; background: var(--surface3);
+  color: var(--text2); font-family: var(--font);
 }
 
-.amount-income { color: var(--income); font-weight: 600; font-family: 'Syne', sans-serif; }
-.amount-expense { color: var(--expense); font-weight: 600; font-family: 'Syne', sans-serif; }
+.amount-income { color: var(--income); font-weight: 800; font-family: var(--font); font-size: 16px; }
+.amount-expense { color: var(--expense); font-weight: 800; font-family: var(--font); font-size: 16px; }
 
 .btn-delete {
-  padding: 6px 12px;
+  padding: 8px 14px;
   background: transparent;
   border: 1px solid rgba(255,94,125,0.3);
-  border-radius: 6px;
-  color: var(--expense);
-  font-size: 12px;
-  cursor: pointer;
-  transition: all 0.2s;
+  border-radius: 8px; color: var(--expense);
+  font-size: 14px; cursor: pointer; transition: all 0.2s;
+  font-family: var(--font);
 }
 .btn-delete:hover { background: rgba(255,94,125,0.15); }
 
-.empty-state {
-  text-align: center;
-  padding: 60px 20px;
-  color: var(--text2);
-}
-.empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; }
+.empty-state { text-align: center; padding: 70px 20px; color: var(--text2); }
+.empty-state .empty-icon { font-size: 54px; margin-bottom: 14px; }
+.empty-state p { font-size: 17px; font-family: var(--font); }
 
-/* CATEGORY BREAKDOWN */
-.category-section {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 28px;
-  margin-bottom: 28px;
-}
-
-.cat-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 14px;
-  margin-top: 16px;
-}
-
-.cat-item {
-  background: var(--surface2);
-  border-radius: 12px;
-  padding: 16px;
-  border: 1px solid var(--border);
-}
-
-.cat-name { font-size: 13px; font-weight: 600; margin-bottom: 6px; }
-.cat-bar-wrap {
-  height: 4px;
-  background: var(--surface3);
-  border-radius: 2px;
-  margin: 8px 0;
-}
-.cat-bar { height: 100%; border-radius: 2px; transition: width 0.8s ease; }
-.cat-amount { font-size: 16px; font-weight: 700; font-family: 'Syne', sans-serif; }
-.cat-count { font-size: 11px; color: var(--text2); }
-
-/* TOAST */
+/* ===== TOAST ===== */
 .toast {
-  position: fixed;
-  bottom: 24px; right: 24px;
-  padding: 14px 22px;
-  border-radius: 12px;
-  font-size: 14px;
-  font-weight: 500;
-  z-index: 999;
-  transform: translateY(100px);
-  opacity: 0;
-  transition: all 0.3s;
-  max-width: 320px;
+  position: fixed; bottom: 28px; right: 28px;
+  padding: 16px 26px; border-radius: 14px;
+  font-size: 15px; font-weight: 700;
+  z-index: 999; transform: translateY(100px); opacity: 0;
+  transition: all 0.3s; max-width: 340px;
+  font-family: var(--font);
 }
 .toast.show { transform: translateY(0); opacity: 1; }
 .toast-success { background: rgba(34,217,142,0.2); border: 1px solid var(--income); color: var(--income); }
 .toast-error { background: rgba(255,94,125,0.2); border: 1px solid var(--expense); color: var(--expense); }
 
-/* LOADING */
-.loading-overlay {
-  position: fixed; inset: 0;
-  background: var(--bg);
-  display: flex; align-items: center; justify-content: center;
-  z-index: 200;
-  flex-direction: column; gap: 16px;
-}
-.spinner {
-  width: 48px; height: 48px;
-  border: 3px solid var(--border);
-  border-top-color: var(--accent);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-.loading-text { color: var(--text2); font-size: 14px; }
-
-/* RESPONSIVE */
-@media (max-width: 768px) {
-  .header { padding: 16px 20px; }
-  .main { padding: 20px 16px; }
-  .form-grid { grid-template-columns: 1fr 1fr; }
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+  .header { padding: 16px 18px; flex-wrap: wrap; gap: 12px; }
+  .top-actions { width: 100%; justify-content: center; }
+  .main { padding: 20px 14px; }
   .user-name { display: none; }
+  .btn-income-top, .btn-expense-top { padding: 12px 20px; font-size: 15px; }
 }
 </style>
 </head>
@@ -645,8 +548,89 @@ tbody td { padding: 14px 16px; }
       <svg viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.8 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 7.9 2.9l5.7-5.7C34.1 6.7 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.6-.4-3.9z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.5 15.8 18.9 12 24 12c3.1 0 5.8 1.1 7.9 2.9l5.7-5.7C34.1 6.7 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-1.9 13.5-5.1l-6.2-5.2C29.4 35.5 26.8 36 24 36c-5.2 0-9.7-3.2-11.4-7.8l-6.6 5.1C9.5 40 16.3 44 24 44z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.3-2.3 4.2-4.3 5.6l6.2 5.2C36.9 36 44 30.8 44 24c0-1.3-.1-2.6-.4-3.9z"/></svg>
       Google se Login karo
     </button>
-    <div class="firebase-note">
-      ⚙️ <strong>Setup:</strong> Pehle Firebase project banao aur upar code mein apna <code>firebaseConfig</code> daalo. Niche setup guide dekho.
+  </div>
+</div>
+
+<!-- INCOME POPUP MODAL -->
+<div class="modal-overlay" id="incomeModal" onclick="closeModalOnOverlay(event, 'incomeModal')">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title income-title">📈 Income Add Karo</div>
+      <div class="modal-close" onclick="closeModal('incomeModal')">✕</div>
+    </div>
+    <div class="modal-stripe income-stripe"></div>
+    <div class="modal-form">
+      <div class="form-group">
+        <label class="form-label">Amount (₹)</label>
+        <input type="number" class="form-input" id="inc-amount" placeholder="0.00" min="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Name / Description</label>
+        <input type="text" class="form-input" id="inc-name" placeholder="e.g., Salary, Freelance...">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Category</label>
+        <select class="form-select" id="inc-category">
+          <option value="💼 Salary">💼 Salary</option>
+          <option value="🏢 Business">🏢 Business</option>
+          <option value="📈 Investment">📈 Investment</option>
+          <option value="🎁 Gift">🎁 Gift</option>
+          <option value="💰 Other Income">💰 Other Income</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Date</label>
+        <input type="date" class="form-input" id="inc-date">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Note (optional)</label>
+        <input type="text" class="form-input" id="inc-note" placeholder="Extra info...">
+      </div>
+      <button class="btn-save-income" onclick="saveFromModal('income')">💾 Income Save Karo</button>
+    </div>
+  </div>
+</div>
+
+<!-- EXPENSE POPUP MODAL -->
+<div class="modal-overlay" id="expenseModal" onclick="closeModalOnOverlay(event, 'expenseModal')">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title expense-title">📉 Expense Add Karo</div>
+      <div class="modal-close" onclick="closeModal('expenseModal')">✕</div>
+    </div>
+    <div class="modal-stripe expense-stripe"></div>
+    <div class="modal-form">
+      <div class="form-group">
+        <label class="form-label">Amount (₹)</label>
+        <input type="number" class="form-input" id="exp-amount" placeholder="0.00" min="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Name / Description</label>
+        <input type="text" class="form-input" id="exp-name" placeholder="e.g., Rent, Food...">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Category</label>
+        <select class="form-select" id="exp-category">
+          <option value="🍔 Food">🍔 Food</option>
+          <option value="🏠 Housing">🏠 Housing</option>
+          <option value="🚗 Transport">🚗 Transport</option>
+          <option value="💊 Health">💊 Health</option>
+          <option value="📚 Education">📚 Education</option>
+          <option value="🛍️ Shopping">🛍️ Shopping</option>
+          <option value="⚡ Utilities">⚡ Utilities</option>
+          <option value="🎬 Entertainment">🎬 Entertainment</option>
+          <option value="💸 Other Expense">💸 Other Expense</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Date</label>
+        <input type="date" class="form-input" id="exp-date">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Note (optional)</label>
+        <input type="text" class="form-input" id="exp-note" placeholder="Extra info...">
+      </div>
+      <button class="btn-save-expense" onclick="saveFromModal('expense')">💾 Expense Save Karo</button>
     </div>
   </div>
 </div>
@@ -658,6 +642,17 @@ tbody td { padding: 14px 16px; }
       <div class="brand-logo">💰</div>
       <span class="brand-name">FinanceVault</span>
     </div>
+
+    <!-- TOP INCOME / EXPENSE BUTTONS -->
+    <div class="top-actions">
+      <button class="btn-income-top" onclick="openModal('incomeModal')">
+        <span style="font-size:20px">📈</span> + Income
+      </button>
+      <button class="btn-expense-top" onclick="openModal('expenseModal')">
+        <span style="font-size:20px">📉</span> + Expense
+      </button>
+    </div>
+
     <div class="user-area">
       <img class="user-avatar" id="userAvatar" src="" alt="">
       <span class="user-name" id="userName"></span>
@@ -714,62 +709,6 @@ tbody td { padding: 14px 16px; }
       </div>
     </div>
 
-    <!-- ADD TRANSACTION -->
-    <div class="add-section">
-      <div class="section-title">➕ Naya Transaction</div>
-      <div class="form-grid">
-        <div class="form-group">
-          <label class="form-label">Type</label>
-          <div class="type-toggle">
-            <button class="type-btn income-active" id="typeIncome" onclick="setType('income')">⬆ Income</button>
-            <button class="type-btn" id="typeExpense" onclick="setType('expense')">⬇ Expense</button>
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Amount (₹)</label>
-          <input type="number" class="form-input" id="amount" placeholder="0.00" min="0">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Name / Description</label>
-          <input type="text" class="form-input" id="txName" placeholder="e.g., Salary, Rent...">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Category</label>
-          <select class="form-select" id="category">
-            <optgroup label="Income">
-              <option value="💼 Salary">💼 Salary</option>
-              <option value="🏢 Business">🏢 Business</option>
-              <option value="📈 Investment">📈 Investment</option>
-              <option value="🎁 Gift">🎁 Gift</option>
-              <option value="💰 Other Income">💰 Other Income</option>
-            </optgroup>
-            <optgroup label="Expense">
-              <option value="🍔 Food">🍔 Food</option>
-              <option value="🏠 Housing">🏠 Housing</option>
-              <option value="🚗 Transport">🚗 Transport</option>
-              <option value="💊 Health">💊 Health</option>
-              <option value="📚 Education">📚 Education</option>
-              <option value="🛍️ Shopping">🛍️ Shopping</option>
-              <option value="⚡ Utilities">⚡ Utilities</option>
-              <option value="🎬 Entertainment">🎬 Entertainment</option>
-              <option value="💸 Other Expense">💸 Other Expense</option>
-            </optgroup>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Date</label>
-          <input type="date" class="form-input" id="txDate">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Note (optional)</label>
-          <input type="text" class="form-input" id="txNote" placeholder="Extra info...">
-        </div>
-        <div class="form-group" style="justify-content:flex-end">
-          <button class="btn-add" onclick="addTransaction()">💾 Save</button>
-        </div>
-      </div>
-    </div>
-
     <!-- CATEGORY BREAKDOWN -->
     <div class="category-section">
       <div class="section-title">📂 Category Breakdown</div>
@@ -821,9 +760,78 @@ tbody td { padding: 14px 16px; }
 // =============================================
 let currentUser = null;
 let transactions = [];
-let selectedType = 'income';
 let currentView = 'all';
 let barChart, pieChart, lineChart;
+
+// =============================================
+// MODAL FUNCTIONS
+// =============================================
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+  // Set today's date
+  if (id === 'incomeModal') document.getElementById('inc-date').valueAsDate = new Date();
+  if (id === 'expenseModal') document.getElementById('exp-date').valueAsDate = new Date();
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function closeModalOnOverlay(e, id) {
+  if (e.target === e.currentTarget) closeModal(id);
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    closeModal('incomeModal');
+    closeModal('expenseModal');
+  }
+});
+
+async function saveFromModal(type) {
+  let amount, name, category, date, note;
+  if (type === 'income') {
+    amount = parseFloat(document.getElementById('inc-amount').value);
+    name = document.getElementById('inc-name').value.trim();
+    category = document.getElementById('inc-category').value;
+    date = document.getElementById('inc-date').value;
+    note = document.getElementById('inc-note').value.trim();
+  } else {
+    amount = parseFloat(document.getElementById('exp-amount').value);
+    name = document.getElementById('exp-name').value.trim();
+    category = document.getElementById('exp-category').value;
+    date = document.getElementById('exp-date').value;
+    note = document.getElementById('exp-note').value.trim();
+  }
+
+  if (!amount || amount <= 0) { showToast('Amount daalo!', 'error'); return; }
+  if (!name) { showToast('Name daalo!', 'error'); return; }
+  if (!date) { showToast('Date daalo!', 'error'); return; }
+
+  const tx = { type, amount, name, category, date, note, createdAt: new Date().toISOString() };
+  try {
+    const id = await saveTransaction(tx);
+    transactions.unshift({ id, ...tx });
+    refreshAll();
+    // Reset fields
+    if (type === 'income') {
+      document.getElementById('inc-amount').value = '';
+      document.getElementById('inc-name').value = '';
+      document.getElementById('inc-note').value = '';
+      closeModal('incomeModal');
+    } else {
+      document.getElementById('exp-amount').value = '';
+      document.getElementById('exp-name').value = '';
+      document.getElementById('exp-note').value = '';
+      closeModal('expenseModal');
+    }
+    showToast(`✅ ${type === 'income' ? 'Income' : 'Expense'} save ho gayi!`, 'success');
+  } catch(e) {
+    showToast('Error: ' + e.message, 'error');
+  }
+}
 
 // =============================================
 // FIREBASE INIT WAIT
@@ -861,7 +869,6 @@ async function loginWithGoogle() {
     showToast('Login failed: ' + e.message, 'error');
   }
 }
-
 async function logout() {
   await window._signOut(window._auth);
   transactions = [];
@@ -891,41 +898,6 @@ async function deleteTransaction(id) {
 }
 
 // =============================================
-// ADD TRANSACTION
-// =============================================
-function setType(type) {
-  selectedType = type;
-  document.getElementById('typeIncome').className = 'type-btn' + (type === 'income' ? ' income-active' : '');
-  document.getElementById('typeExpense').className = 'type-btn' + (type === 'expense' ? ' expense-active' : '');
-}
-
-async function addTransaction() {
-  const amount = parseFloat(document.getElementById('amount').value);
-  const name = document.getElementById('txName').value.trim();
-  const category = document.getElementById('category').value;
-  const date = document.getElementById('txDate').value;
-  const note = document.getElementById('txNote').value.trim();
-
-  if (!amount || amount <= 0) { showToast('Amount daalo!', 'error'); return; }
-  if (!name) { showToast('Name daalo!', 'error'); return; }
-  if (!date) { showToast('Date daalo!', 'error'); return; }
-
-  const tx = { type: selectedType, amount, name, category, date, note, createdAt: new Date().toISOString() };
-
-  try {
-    const id = await saveTransaction(tx);
-    transactions.unshift({ id, ...tx });
-    refreshAll();
-    document.getElementById('amount').value = '';
-    document.getElementById('txName').value = '';
-    document.getElementById('txNote').value = '';
-    showToast('✅ Transaction save ho gayi!', 'success');
-  } catch(e) {
-    showToast('Error: ' + e.message, 'error');
-  }
-}
-
-// =============================================
 // VIEW FILTER
 // =============================================
 function setView(view, btn) {
@@ -939,13 +911,9 @@ function getFilteredTx() {
   const now = new Date();
   return transactions.filter(t => {
     const d = new Date(t.date);
-    if (currentView === 'daily') {
-      return d.toDateString() === now.toDateString();
-    } else if (currentView === 'monthly') {
-      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-    } else if (currentView === 'yearly') {
-      return d.getFullYear() === now.getFullYear();
-    }
+    if (currentView === 'daily') return d.toDateString() === now.toDateString();
+    if (currentView === 'monthly') return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    if (currentView === 'yearly') return d.getFullYear() === now.getFullYear();
     return true;
   });
 }
@@ -974,7 +942,6 @@ function updateSummary(txs) {
   const expense = txs.filter(t => t.type === 'expense').reduce((a, t) => a + t.amount, 0);
   const balance = income - expense;
   const savings = income > 0 ? Math.round((balance / income) * 100) : 0;
-
   document.getElementById('totalBalance').textContent = formatINR(balance);
   document.getElementById('totalIncome').textContent = formatINR(income);
   document.getElementById('totalExpense').textContent = formatINR(expense);
@@ -1000,7 +967,6 @@ function renderTable() {
     tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">💸</div><p>Koi transaction nahi mili</p></div></td></tr>`;
     return;
   }
-
   tbody.innerHTML = filtered.map(t => `
     <tr>
       <td>${new Date(t.date).toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'})}</td>
@@ -1008,7 +974,7 @@ function renderTable() {
       <td><span class="cat-badge">${t.category}</span></td>
       <td><span class="badge badge-${t.type}">${t.type === 'income' ? '⬆ Income' : '⬇ Expense'}</span></td>
       <td class="amount-${t.type}">${t.type === 'income' ? '+' : '-'}${formatINR(t.amount)}</td>
-      <td style="color:var(--text2);font-size:13px">${t.note || '—'}</td>
+      <td style="color:var(--text2);font-size:14px">${t.note || '—'}</td>
       <td><button class="btn-delete" onclick="deleteTransaction('${t.id}')">🗑️</button></td>
     </tr>
   `).join('');
@@ -1026,21 +992,18 @@ function updateCategoryFilter() {
 // CHARTS
 // =============================================
 const chartDefaults = {
-  plugins: { legend: { labels: { color: '#8888aa', font: { family: 'DM Sans' } } } },
+  plugins: { legend: { labels: { color: '#8888aa', font: { family: "'Arial Rounded MT Bold', sans-serif", size: 13 } } } },
   scales: {
-    x: { ticks: { color: '#8888aa' }, grid: { color: 'rgba(255,255,255,0.04)' } },
-    y: { ticks: { color: '#8888aa' }, grid: { color: 'rgba(255,255,255,0.04)' } }
+    x: { ticks: { color: '#8888aa', font: { family: "'Arial Rounded MT Bold', sans-serif" } }, grid: { color: 'rgba(255,255,255,0.04)' } },
+    y: { ticks: { color: '#8888aa', font: { family: "'Arial Rounded MT Bold', sans-serif" } }, grid: { color: 'rgba(255,255,255,0.04)' } }
   }
 };
 
 function renderCharts(txs) {
-  renderBarChart(txs);
-  renderPieChart(txs);
-  renderLineChart(txs);
+  renderBarChart(txs); renderPieChart(txs); renderLineChart(txs);
 }
 
 function renderBarChart(txs) {
-  // Group by month
   const months = {};
   txs.forEach(t => {
     const key = new Date(t.date).toLocaleDateString('en-IN', { month: 'short', year: '2-digit' });
@@ -1057,8 +1020,8 @@ function renderBarChart(txs) {
     data: {
       labels,
       datasets: [
-        { label: 'Income', data: inc, backgroundColor: 'rgba(34,217,142,0.7)', borderRadius: 6 },
-        { label: 'Expense', data: exp, backgroundColor: 'rgba(255,94,125,0.7)', borderRadius: 6 }
+        { label: 'Income', data: inc, backgroundColor: 'rgba(34,217,142,0.7)', borderRadius: 7 },
+        { label: 'Expense', data: exp, backgroundColor: 'rgba(255,94,125,0.7)', borderRadius: 7 }
       ]
     },
     options: { responsive: true, ...chartDefaults }
@@ -1079,9 +1042,9 @@ function renderPieChart(txs) {
     type: 'doughnut',
     data: {
       labels: labels.length ? labels : ['No Data'],
-      datasets: [{ data: data.length ? data : [1], backgroundColor: colors, borderWidth: 0, hoverOffset: 8 }]
+      datasets: [{ data: data.length ? data : [1], backgroundColor: colors, borderWidth: 0, hoverOffset: 10 }]
     },
-    options: { responsive: true, plugins: { legend: { labels: { color: '#8888aa', font: { family: 'DM Sans' } } } } }
+    options: { responsive: true, plugins: { legend: { labels: { color: '#8888aa', font: { family: "'Arial Rounded MT Bold', sans-serif", size: 13 } } } } }
   });
 }
 
@@ -1094,13 +1057,8 @@ function renderLineChart(txs) {
   });
   const sorted = Object.keys(days).sort();
   const labels = sorted.map(d => new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }));
-
-  // Running balance
   let bal = 0;
-  const balance = sorted.map(d => {
-    bal += days[d].income - days[d].expense;
-    return bal;
-  });
+  const balance = sorted.map(d => { bal += days[d].income - days[d].expense; return bal; });
 
   if (lineChart) lineChart.destroy();
   lineChart = new Chart(document.getElementById('lineChart'), {
@@ -1111,11 +1069,8 @@ function renderLineChart(txs) {
         label: 'Net Balance',
         data: balance.length ? balance : [0],
         borderColor: '#7c6aff',
-        backgroundColor: 'rgba(124,106,255,0.1)',
-        fill: true,
-        tension: 0.4,
-        pointRadius: 4,
-        pointBackgroundColor: '#7c6aff'
+        backgroundColor: 'rgba(124,106,255,0.12)',
+        fill: true, tension: 0.4, pointRadius: 5, pointBackgroundColor: '#7c6aff'
       }]
     },
     options: { responsive: true, ...chartDefaults }
@@ -1132,7 +1087,6 @@ function renderCategories(txs) {
     cats[t.category].total += t.amount;
     cats[t.category].count++;
   });
-
   const maxAmt = Math.max(...Object.values(cats).map(c => c.total), 1);
   const colors = ['#7c6aff','#ff6a9b','#22d98e','#ffc832','#ff8c32','#38bdf8','#a78bfa','#fb923c','#34d399'];
   let i = 0;
@@ -1143,14 +1097,13 @@ function renderCategories(txs) {
       <div class="cat-item">
         <div class="cat-name">${name}</div>
         <div class="cat-bar-wrap"><div class="cat-bar" style="width:${pct}%;background:${color}"></div></div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
           <div class="cat-amount" style="color:${color}">${formatINR(info.total)}</div>
           <div class="cat-count">${info.count} txn</div>
         </div>
       </div>`;
   }).join('');
-
-  document.getElementById('catGrid').innerHTML = html || '<div style="color:var(--text2);font-size:14px">Koi expense nahi</div>';
+  document.getElementById('catGrid').innerHTML = html || '<div style="color:var(--text2);font-size:16px">Koi expense nahi</div>';
 }
 
 // =============================================
@@ -1162,51 +1115,6 @@ function showToast(msg, type = 'success') {
   t.className = `toast toast-${type} show`;
   setTimeout(() => t.className = 'toast', 3000);
 }
-
-// DEFAULT DATE
-document.getElementById('txDate').valueAsDate = new Date();
 </script>
-
-<!-- SETUP GUIDE -->
-<div style="display:none" id="setup-guide">
-<!--
-=====================================================
-🔥 FIREBASE SETUP GUIDE — 5 MINUTE MEIN READY
-=====================================================
-
-STEP 1: firebase.google.com par jao
-STEP 2: "Create a project" → project naam daalo
-STEP 3: Authentication → Sign-in method → Google ENABLE karo
-STEP 4: Firestore Database → Create database → "Start in test mode"
-STEP 5: Project Settings → "Add app" → Web (</>)
-STEP 6: Config copy karo aur upar firebaseConfig mein paste karo
-
-STEP 7: Firestore Rules:
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /transactions/{doc} {
-      allow read, write: if request.auth != null && request.auth.uid == resource.data.uid;
-      allow create: if request.auth != null;
-    }
-  }
-}
-
-STEP 8: GitHub Pages:
-1. Naya GitHub repo banao
-2. Yeh file upload karo (index.html ke naam se)
-3. Settings → Pages → Deploy from branch → main → Save
-4. Thodi der baad aapka URL milega!
-
-=====================================================
-DATA KABHI DELETE NAHI HOGA BECAUSE:
-- Firestore cloud database hai (Google ka)
-- Har user ka data alag-alag safe rehta hai
-- GitHub Pages sirf front-end serve karta hai
-- Real data Firebase cloud mein hota hai
-=====================================================
--->
-</div>
-
 </body>
 </html>
